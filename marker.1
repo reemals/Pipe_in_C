@@ -1,0 +1,73 @@
+/* Assignment 1: Processes, Signals and Interprocess Communication */
+/* By: Reem Alsaeed */
+/* Date: May, 24, 2019 */
+NAME
+  marker -- An Assignment marker that involves two processes connected by a pipe with limited execution time for 3 seconds
+
+SYNOPSIS
+  The input should be in the test.in file
+  To execute the utility run the program with following:
+  ./marker [process 1] -p- [process 2]
+  where process 1 and 2 are terminal commands
+
+DESCRIPTION
+  The program takes an input file "test.in"
+  Then when you call
+  ./marker [process 1] -p- [process 2]
+  [process 1] will take stdin from "test.in" file placing its output in a pipe.
+  If an error occurred running process 1, the error will be in "test.er1" file.
+  [process 2] will take its input from the pipe and place its output in "test.out" file
+  If an error occurred running process 2, the error will be in "test.er2" file.
+
+  The program uses a pipe and different system calls.
+
+EXAMPLES
+  (1) When processes 1 and 2 do not require the stdin from "test.in"
+  - ./marker echo 1 -p- wc -c
+  - cat test.out
+  -     2
+
+  (2) When processes 1 and 2 do require the stdin from "test.in"
+  - echo 123 > test.in
+  - ./marker cat - -p- cat -
+  - cat test.out
+  - 123
+  - ./marker cat - -p- wc -c
+  -     4
+
+  (3) In case Process 1 is not a valid process
+  - echo world> test.in
+  - ./marker wc -z -p- cat -
+  - cat test.out
+  - cat test.err1
+  - wc: illegal option -- z
+  - usage: wc [-clmw] [file ...]
+  - cat test.err2
+
+  (4) In case Process 2 is not a valid process
+  - echo hello > test.in
+  - ./marker cat - -p- wc -z
+  - cat test.out
+  - cat test.err1
+  - cat test.err2
+  - wc: illegal option -- z
+  - usage: wc [-clmw] [file ...]
+
+  (5) In case the program takes more than 3 seconds
+  - ./marker awk 'BEGIN {i = 1; while (i > 0)}' -p- echo 1
+  - Alarm signal updated
+  - Process echo finished with status 0
+  - 3 seconds has past
+  - Process 25364 did not finish in time
+  - marker: At least one process did not finish
+  - Killed: 9
+
+EXIT STATUS
+  The marker exits 0 on success, and >0 if an error occurs.
+  Depending on the error it will be either in the error files or printed to the terminal (more than 3 seconds)
+
+AUTHOR
+  Written by Reem Alsaeed
+SEE ALSO
+  kill(2), wait(2), pipe(2), fork(2), write(2), open(2), close(2),
+  signal(7), errno(3), dup2(2), freopen(3)
