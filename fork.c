@@ -1,4 +1,4 @@
-/*  Processes, Signals and Interprocess Communication */
+/* Processes, Signals and Interprocess Communication */
 /* By: Reem Alsaeed */
 /* Date: May, 24, 2019 */
 #include <sys/types.h>
